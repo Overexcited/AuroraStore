@@ -5,6 +5,7 @@
 
 package com.aurora.store.compose.ui.sheets
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -47,11 +48,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.aurora.Constants
 import com.aurora.extensions.openInfo
 import com.aurora.extensions.toast
 import com.aurora.store.AuroraApp
@@ -88,7 +91,7 @@ fun AppUpdateSheet(
             AppHeader(
                 update = update,
                 onShowDetails = {
-                    onNavigateTo(Destination.AppDetails(update.packageName))
+                    openPlayStore(context, update.packageName)
                     onDismiss()
                 }
             )
@@ -122,8 +125,6 @@ fun AppUpdateSheet(
                 }
             )
 
-            // Per-app update override: only meaningful with more than one account. The primary
-            // update button keeps using the default (or the app's existing binding).
             if (accounts.size > 1) {
                 HorizontalDivider(
                     modifier = Modifier.padding(
@@ -187,6 +188,21 @@ fun AppUpdateSheet(
 
             Spacer(Modifier.navigationBarsPadding())
         }
+    }
+}
+
+private fun openPlayStore(context: android.content.Context, packageName: String) {
+    val uri = "${Constants.SHARE_URL}$packageName".toUri()
+    val intent = Intent(Intent.ACTION_VIEW).apply { data = uri }
+
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(
+            intent.apply {
+                setPackage(Constants.PACKAGE_NAME_PLAY_STORE)
+            }
+        )
+    } else {
+        context.startActivity(intent)
     }
 }
 
