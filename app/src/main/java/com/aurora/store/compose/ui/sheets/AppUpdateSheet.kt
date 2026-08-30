@@ -26,7 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -91,6 +91,10 @@ fun AppUpdateSheet(
             AppHeader(
                 update = update,
                 onShowDetails = {
+                    onNavigateTo(Destination.AppDetails(update.packageName))
+                    onDismiss()
+                },
+                onOpenPlayStore = {
                     openPlayStore(context, update.packageName)
                     onDismiss()
                 }
@@ -207,7 +211,11 @@ private fun openPlayStore(context: android.content.Context, packageName: String)
 }
 
 @Composable
-private fun AppHeader(update: Update, onShowDetails: () -> Unit) {
+private fun AppHeader(
+    update: Update,
+    onShowDetails: () -> Unit,
+    onOpenPlayStore: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -252,8 +260,22 @@ private fun AppHeader(update: Update, onShowDetails: () -> Unit) {
             )
         }
 
-        FilledTonalButton(onClick = onShowDetails) {
-            Text(stringResource(R.string.updates_app_details))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xsmall)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledTonalIconButton(onClick = onShowDetails) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_info),
+                    contentDescription = "App details"
+                )
+            }
+            FilledTonalIconButton(onClick = onOpenPlayStore) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_play_store),
+                    contentDescription = "Open in Play Store"
+                )
+            }
         }
     }
 }
