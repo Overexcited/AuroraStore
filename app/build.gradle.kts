@@ -35,9 +35,7 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xannotation-default-target=param-property"
-        )
+        freeCompilerArgs.addAll("-Xannotation-default-target=param-property")
         optIn.addAll(
             "androidx.compose.material3.ExperimentalMaterial3Api",
             "androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
@@ -52,29 +50,19 @@ kotlin {
 configure<ApplicationExtension> {
     namespace = "com.aurora.store"
     compileSdk {
-        version = release(37) {
-            minorApiLevel = 0
-        }
+        version = release(37) { minorApiLevel = 0 }
     }
 
     defaultConfig {
         applicationId = "com.aurora.store"
-        minSdk {
-            version = release(23)
-        }
-        targetSdk {
-            version = release(37)
-        }
-
+        minSdk { version = release(23) }
+        targetSdk { version = release(37) }
         versionCode = 76
         versionName = "4.8.4"
-
         testInstrumentationRunner = "com.aurora.store.HiltInstrumentationTestRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
-
         buildConfigField("String", "EXODUS_API_KEY", "\"bbe6ebae4ad45a9cbacb17d69739799b8df2c7ae\"")
         buildConfigField("long", "BUILD_TIMESTAMP", "${lastCommitTimestamp.get()}L")
-
         missingDimensionStrategy("device", "vanilla")
     }
 
@@ -84,7 +72,6 @@ configure<ApplicationExtension> {
                 val properties = Properties().apply {
                     File("signing.properties").inputStream().use { load(it) }
                 }
-
                 keyAlias = properties["KEY_ALIAS"] as String
                 keyPassword = properties["KEY_PASSWORD"] as String
                 storeFile = file(properties["STORE_FILE"] as String)
@@ -109,9 +96,7 @@ configure<ApplicationExtension> {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            if (File("signing.properties").exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("aosp")
         }
 
         register("nightly") {
@@ -134,14 +119,11 @@ configure<ApplicationExtension> {
             dimension = "device"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
-
         create("huawei") {
             dimension = "device"
             versionNameSuffix = "-hw"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "false")
         }
-
-        // This flavor is only for preloaded devices / users who push the app to system
         create("preload") {
             dimension = "device"
             versionNameSuffix = "-preload"
@@ -155,14 +137,8 @@ configure<ApplicationExtension> {
         compose = true
     }
 
-    lint {
-        lintConfig = file("lint.xml")
-    }
-
-    androidResources {
-        generateLocaleConfig = true
-    }
-
+    lint { lintConfig = file("lint.xml") }
+    androidResources { generateLocaleConfig = true }
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
@@ -178,9 +154,7 @@ androidComponents {
     }
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
 ktlint {
     android = true
@@ -188,12 +162,8 @@ ktlint {
 }
 
 dependencies {
-
-    // Google's Goodies
     implementation(libs.google.android.material)
     implementation(libs.google.protobuf.javalite)
-
-    // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.biometric)
@@ -202,7 +172,6 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.paging.runtime)
-
     implementation(libs.androidx.adaptive.core)
     implementation(libs.androidx.adaptive.navigation)
     implementation(libs.androidx.adaptive.layout)
@@ -210,10 +179,8 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.kotlinx.serialization.json)
-
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.ui)
@@ -223,57 +190,35 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Coil
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
-
-    // HTTP Clients
     implementation(libs.squareup.okhttp)
-
-    // Lib-SU
     implementation(libs.github.topjohnwu.libsu)
-
-    // GPlayApi
     implementation(libs.auroraoss.gplayapi)
-
-    // Shizuku
     compileOnly(libs.rikka.hidden.stub)
     implementation(libs.rikka.tools.refine.runtime)
     implementation(libs.rikka.shizuku.api)
     implementation(libs.rikka.shizuku.provider)
-
     implementation(libs.lsposed.hiddenapibypass)
-
-    // Test
     testImplementation(libs.junit)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.google.truth)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.google.truth)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // Hilt
     ksp(libs.hilt.android.compiler)
     ksp(libs.hilt.androidx.compiler)
     implementation(libs.androidx.hilt.viewmodel)
     implementation(libs.hilt.android.core)
     implementation(libs.hilt.androidx.work)
-
     kspAndroidTest(libs.hilt.android.compiler)
     androidTestImplementation(libs.hilt.android.testing)
-
-    // Room
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.paging)
-
     implementation(libs.process.phoenix)
-
     "huaweiImplementation"(libs.huawei.hms.coreservice)
-
-    // LeakCanary
     debugImplementation(libs.squareup.leakcanary.android)
 }
