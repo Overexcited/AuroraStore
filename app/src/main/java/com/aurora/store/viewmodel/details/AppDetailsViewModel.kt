@@ -28,7 +28,6 @@ import com.aurora.gplayapi.network.IHttpClient
 import com.aurora.store.AuroraApp
 import com.aurora.store.data.AccountRepository
 import com.aurora.store.data.ExodusRepository
-import com.aurora.store.data.event.AuthEvent
 import com.aurora.store.data.event.InstallerEvent
 import com.aurora.store.data.helper.DownloadHelper
 import com.aurora.store.data.model.AppState
@@ -43,6 +42,7 @@ import com.aurora.store.data.room.favourite.FavouriteDao
 import com.aurora.store.data.room.review.LocalReview
 import com.aurora.store.data.room.review.LocalReview.Companion.toReview
 import com.aurora.store.data.room.review.ReviewDao
+import com.aurora.store.util.AppRestart
 import com.aurora.store.util.CertUtil
 import com.aurora.store.util.PackageUtil
 import com.aurora.store.util.Preferences
@@ -194,32 +194,51 @@ class AppDetailsViewModel @Inject constructor(
 
     fun fetchAppDetails(packageName: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            var authRecoveryAttempted = false
             try {
-                _app.value = appDetailsHelper.getAppByPackageName(packageName).copy(
-                    isInstalled = PackageUtil.isInstalled(context, packageName)
-                )
-                val existingDownload = downloadHelper.getDownload(packageName)
+                while (true) {
+                    try {
+                        _app.value = appDetailsHelper.getAppByPackageName(packageName).copy(
+                            isInstalled = PackageUtil.isInstalled(context, packageName)
+                        )
+                        val existingDownload = downloadHelper.getDownload(packageName)
 
-                // A COMPLETED record for an app that is no longer installed means the app was
-                // installed then removed while Aurora held a stale record.
-                // Remove it so the live download observer doesn't lock the UI in Installing state
-                // indefinitely.
-                if (existingDownload?.status == DownloadStatus.COMPLETED && !isInstalled) {
-                    downloadHelper.removeDownload(packageName)
-                    _state.value = defaultAppState
-                } else {
-                    // Seed state from any in-flight download for this package so reopening
-                    // the screen doesn't briefly flash the default install action while the
-                    // download flow catches up.
-                    _state.value =
-                        existingDownload?.let { stateFromDownload(it) } ?: defaultAppState
+                        // A COMPLETED record for an app that is no longer installed means the app was
+                        // installed then removed while Aurora held a stale record.
+                        // Remove it so the live download observer doesn't lock the UI in Installing state
+                        // indefinitely.
+                        if (existingDownload?.status == DownloadStatus.COMPLETED && !isInstalled) {
+                            downloadHelper.removeDownload(packageName)
+                            _state.value = defaultAppState
+                        } else {
+                            // Seed state from any in-flight download for this package so reopening
+                            // the screen doesn't briefly flash the default install action while the
+                            // download flow catches up.
+                            _state.value =
+                                existingDownload?.let { stateFromDownload(it) } ?: defaultAppState
+                        }
+                        break
+                    } catch (exception: GooglePlayException.AuthException) {
+                        if (authRecoveryAttempted) {
+                            Log.w(TAG, "App details still returns ${exception.code} after auth refresh; restarting application")
+                            AppRestart.restart(context)
+                            return@launch
+                        }
+
+                        authRecoveryAttempted = true
+                        Log.w(TAG, "App details fetch returned ${exception.code}; refreshing auth data")
+
+                        val accountId = accountRepository.resolveAccountId(packageName)
+                        val refreshed = accountId?.let { authProvider.refresh(it).isSuccess } == true
+                        if (!refreshed) {
+                            Log.w(TAG, "Auth data refresh failed; restarting application")
+                            AppRestart.restart(context)
+                            return@launch
+                        }
+
+                        Log.i(TAG, "Auth data refreshed; retrying app details")
+                    }
                 }
-            } catch (exception: GooglePlayException.AuthException) {
-                // The saved Play token has been rejected mid-session. Hand off to
-                // Splash to re-validate and rebuild auth, and ask it to bring the
-                // user back to this app's details once auth is good again.
-                Log.w(TAG, "App details fetch returned ${exception.code}, redirecting to Splash")
-                AuroraApp.events.send(AuthEvent.SessionExpired(packageName))
             } catch (exception: Exception) {
                 Log.e(TAG, "Failed to fetch app details", exception)
                 _app.value = null
@@ -323,7 +342,7 @@ class AppDetailsViewModel @Inject constructor(
                 // network call leaves the review visible rather than silently disappearing.
                 if (email.isNotBlank()) reviewDao.delete(app.packageName, email)
             } catch (exception: Exception) {
-                Log.e(TAG, "Failed to delete review", exception)
+                Log.e(TAG, "Failed to delete user review", exception)
             }
         }
     }
