@@ -26,7 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -264,13 +264,21 @@ private fun AppHeader(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_xsmall)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FilledTonalIconButton(onClick = onShowDetails) {
+            FilledTonalButton(
+                onClick = onShowDetails,
+                modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues()
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_info),
                     contentDescription = "App details"
                 )
             }
-            FilledTonalIconButton(onClick = onOpenPlayStore) {
+            FilledTonalButton(
+                onClick = onOpenPlayStore,
+                modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues()
+            ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_store),
                     contentDescription = "Open in Play Store"
