@@ -44,9 +44,11 @@ fun AppUpdateItem(
     onCancel: () -> Unit = {},
     onUnignore: (() -> Unit)? = null
 ) {
-    // Only the INSTALLING status shows as "Installing"; a downloaded-but-not-installed
-    // (COMPLETED) app falls back to the "Update" action. isChecking is the pre-download
-    // tracker check, shown with the same indeterminate progress + Cancel as an active download.
+    // A COMPLETED download means the update APK is already present and ready for
+    // installation. The existing onUpdate callback ultimately calls
+    // DownloadHelper.enqueueUpdate(), which detects canInstall() and invokes the
+    // preferred installer directly without downloading the APK again.
+    val readyToInstall = download?.status == DownloadStatus.COMPLETED
     val inProgress = isChecking || (download != null && !download.isFinished)
     val installing = download?.status == DownloadStatus.INSTALLING
     val progress = if (download?.status == DownloadStatus.DOWNLOADING) {
@@ -113,6 +115,12 @@ fun AppUpdateItem(
             inProgress -> {
                 OutlinedButton(onClick = onCancel) {
                     Text(stringResource(R.string.action_cancel))
+                }
+            }
+
+            readyToInstall -> {
+                Button(onClick = onUpdate) {
+                    Text(stringResource(R.string.action_install))
                 }
             }
 
