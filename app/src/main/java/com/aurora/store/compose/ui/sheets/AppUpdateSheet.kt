@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -267,7 +268,7 @@ private fun AppHeader(
             FilledTonalButton(
                 onClick = onShowDetails,
                 modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                colors = ButtonDefaults.filledTonalButtonColors()
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_info),
@@ -277,7 +278,7 @@ private fun AppHeader(
             FilledTonalButton(
                 onClick = onOpenPlayStore,
                 modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                colors = ButtonDefaults.filledTonalButtonColors()
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_store),
