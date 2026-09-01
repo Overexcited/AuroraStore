@@ -1,4 +1,5 @@
 name: Build Vanilla Release APK
+run-name: Build Vanilla Release APK - Run ${{ github.run_number }}
 
 on:
   workflow_dispatch:
