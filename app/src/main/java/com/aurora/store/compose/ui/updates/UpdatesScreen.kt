@@ -5,6 +5,9 @@
 
 package com.aurora.store.compose.ui.updates
 
+import android.content.Intent
+import android.net.Uri
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -78,6 +81,21 @@ fun UpdatesScreen(
 
     val mainAnyActive = mainEntries.any { it.value.isActive() }
     val approvalAnyActive = approvalEntries.any { it.value.isActive() }
+
+    fun openPlayStore(update: Update) {
+        val uri = Uri.parse(
+            "https://play.google.com/store/apps/details?id=${update.packageName}"
+        )
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage("com.android.vending")
+        }
+
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+        } else {
+            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+        }
+    }
 
     PullToRefreshBox(
         modifier = Modifier.fillMaxSize(),
@@ -173,6 +191,7 @@ fun UpdatesScreen(
                             keyPrefix = "main",
                             onNavigateTo = onNavigateTo,
                             onRequestUpdate = onRequestUpdate,
+                            onOpenPlayStore = ::openPlayStore,
                             onCancelUpdate = onCancelUpdate,
                             checkingPackages = checkingPackages
                         )
@@ -210,6 +229,7 @@ fun UpdatesScreen(
                             keyPrefix = "approval",
                             onNavigateTo = onNavigateTo,
                             onRequestUpdate = onRequestUpdate,
+                            onOpenPlayStore = ::openPlayStore,
                             onCancelUpdate = onCancelUpdate,
                             checkingPackages = checkingPackages
                         )
@@ -227,6 +247,7 @@ fun UpdatesScreen(
                             keyPrefix = "incompatible",
                             onNavigateTo = onNavigateTo,
                             onRequestUpdate = onRequestUpdate,
+                            onOpenPlayStore = ::openPlayStore,
                             onCancelUpdate = onCancelUpdate,
                             checkingPackages = checkingPackages
                         )
@@ -266,6 +287,7 @@ private fun LazyListScope.updateItems(
     keyPrefix: String,
     onNavigateTo: (Destination) -> Unit,
     onRequestUpdate: (Update) -> Unit,
+    onOpenPlayStore: (Update) -> Unit,
     onCancelUpdate: (String) -> Unit,
     checkingPackages: Set<String>
 ) {
@@ -281,6 +303,7 @@ private fun LazyListScope.updateItems(
                 onNavigateTo(Destination.AppUpdate(update))
             },
             onUpdate = { onRequestUpdate(update) },
+            onOpenPlayStore = { onOpenPlayStore(update) },
             onCancel = { onCancelUpdate(update.packageName) }
         )
     }

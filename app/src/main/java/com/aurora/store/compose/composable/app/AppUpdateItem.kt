@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +44,7 @@ fun AppUpdateItem(
     isChecking: Boolean = false,
     onClick: () -> Unit = {},
     onUpdate: () -> Unit = {},
+    onOpenPlayStore: () -> Unit = {},
     onCancel: () -> Unit = {},
     onUnignore: (() -> Unit)? = null
 ) {
@@ -118,15 +122,35 @@ fun AppUpdateItem(
                 }
             }
 
-            readyToInstall -> {
-                Button(onClick = onUpdate) {
-                    Text(stringResource(R.string.action_install))
-                }
-            }
-
             else -> {
-                Button(onClick = onUpdate) {
-                    Text(stringResource(R.string.action_update))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = onOpenPlayStore,
+                        modifier = Modifier.requiredSize(
+                            dimensionResource(R.dimen.icon_size_medium)
+                        ),
+                        shape = ButtonDefaults.shape,
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_play_store),
+                            contentDescription = "Open in Play Store"
+                        )
+                    }
+                    Spacer(Modifier.width(dimensionResource(R.dimen.spacing_small)))
+                    Button(onClick = onUpdate) {
+                        Text(
+                            stringResource(
+                                if (readyToInstall) {
+                                    R.string.action_install
+                                } else {
+                                    R.string.action_update
+                                }
+                            )
+                        )
+                    }
                 }
             }
         }
