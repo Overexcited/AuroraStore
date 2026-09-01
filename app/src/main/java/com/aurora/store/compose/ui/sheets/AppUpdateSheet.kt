@@ -268,7 +268,10 @@ private fun AppHeader(
             FilledTonalButton(
                 onClick = onShowDetails,
                 modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
-                colors = ButtonDefaults.filledTonalButtonColors()
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues()
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_info),
@@ -278,7 +281,10 @@ private fun AppHeader(
             FilledTonalButton(
                 onClick = onOpenPlayStore,
                 modifier = Modifier.requiredSize(dimensionResource(R.dimen.icon_size_medium)),
-                colors = ButtonDefaults.filledTonalButtonColors()
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues()
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_play_store),
