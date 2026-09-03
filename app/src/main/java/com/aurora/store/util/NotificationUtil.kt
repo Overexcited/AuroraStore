@@ -452,7 +452,9 @@ object NotificationUtil {
         val contentIntent = getContentIntentForMain(context, initialTab = 2)
 
         return NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_UPDATES)
-            .setSmallIcon(R.drawable.ic_updates)
+            // Changed only the small status-bar/notification icon for the "updates available"
+            // notification. The existing notification behaviour and content are unchanged.
+            .setSmallIcon(R.drawable.ic_play_store)
             .setContentTitle(
                 if (updatesList.size == 1) {
                     context.getString(
