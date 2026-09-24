@@ -22,6 +22,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -117,7 +118,7 @@ fun AppUpdateItem(
                     modifier = Modifier.requiredSize(
                         dimensionResource(R.dimen.icon_size_medium)
                     ),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_cloud_upload),
@@ -132,7 +133,7 @@ fun AppUpdateItem(
                     modifier = Modifier.requiredSize(
                         dimensionResource(R.dimen.icon_size_medium)
                     ),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_cancel),
@@ -151,7 +152,7 @@ fun AppUpdateItem(
                             dimensionResource(R.dimen.icon_size_medium)
                         ),
                         shape = ButtonDefaults.shape,
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_play_store),
@@ -164,7 +165,7 @@ fun AppUpdateItem(
                         modifier = Modifier.requiredSize(
                             dimensionResource(R.dimen.icon_size_medium)
                         ),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                     ) {
                         Icon(
                             painter = painterResource(
