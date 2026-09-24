@@ -111,14 +111,33 @@ fun AppUpdateItem(
             }
 
             installing -> {
-                OutlinedButton(onClick = {}, enabled = false) {
-                    Text(stringResource(R.string.action_installing))
+                OutlinedButton(
+                    onClick = {},
+                    enabled = false,
+                    modifier = Modifier.requiredSize(
+                        dimensionResource(R.dimen.icon_size_medium)
+                    ),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_cloud_upload),
+                        contentDescription = stringResource(R.string.action_installing)
+                    )
                 }
             }
 
             inProgress -> {
-                OutlinedButton(onClick = onCancel) {
-                    Text(stringResource(R.string.action_cancel))
+                OutlinedButton(
+                    onClick = onCancel,
+                    modifier = Modifier.requiredSize(
+                        dimensionResource(R.dimen.icon_size_medium)
+                    ),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_cancel),
+                        contentDescription = stringResource(R.string.action_cancel)
+                    )
                 }
             }
 
@@ -140,9 +159,22 @@ fun AppUpdateItem(
                         )
                     }
                     Spacer(Modifier.width(dimensionResource(R.dimen.spacing_small)))
-                    Button(onClick = onUpdate) {
-                        Text(
-                            stringResource(
+                    Button(
+                        onClick = onUpdate,
+                        modifier = Modifier.requiredSize(
+                            dimensionResource(R.dimen.icon_size_medium)
+                        ),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues()
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                if (readyToInstall) {
+                                    R.drawable.ic_cloud_upload
+                                } else {
+                                    R.drawable.ic_arrow_download
+                                }
+                            ),
+                            contentDescription = stringResource(
                                 if (readyToInstall) {
                                     R.string.action_install
                                 } else {
